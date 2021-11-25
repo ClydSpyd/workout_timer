@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_final_fields, prefer_const_constructors
+// ignore_for_file: prefer_final_fields, prefer_const_constructors, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:timer_controller/timer_controller.dart';
+import 'package:workout_timer/components/control_buttons.dart';
 import 'package:workout_timer/components/go_button.dart';
 import 'package:workout_timer/components/restart_button.dart';
 import 'package:workout_timer/components/workout_text.dart';
@@ -10,7 +11,11 @@ import 'package:workout_timer/components/countdown_timer.dart';
 import 'dart:async';
 
 class Workout extends StatefulWidget {
-  Workout({Key? key}) : super(key: key);
+  Workout(this.roundLength, this.restLength, this.updateStage, {Key? key})
+      : super(key: key);
+  int roundLength = 30;
+  int restLength = 10;
+  Function updateStage;
 
   @override
   State<Workout> createState() => _WorkoutState();
@@ -19,12 +24,11 @@ class Workout extends StatefulWidget {
 class _WorkoutState extends State<Workout> {
   late TimerController _controller;
   int duration = 5;
-  int _roundLength = 60;
-  int _restLength = 30;
   int _sets = exercises.length;
   int _roundNumber = 0;
   int _exerciseIdx = 0;
   bool _isRunning = false;
+  bool _isPaused = false;
   bool _cycleFinished = false;
 
   @override
@@ -32,10 +36,14 @@ class _WorkoutState extends State<Workout> {
     _controller = TimerController.seconds(duration);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[900],
+        elevation: 0.0,
+      ),
       backgroundColor: Colors.grey[900],
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(30.0, 150.0, 20.0, 50.0),
-        child: SizedBox.expand(
+      body: Center(
+        child: Container(
+          // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
           child: Column(
             // mainAxisSize: MainAxisSize.max,
             mainAxisAlignment:
@@ -43,40 +51,29 @@ class _WorkoutState extends State<Workout> {
                     ? MainAxisAlignment.center
                     : MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: (!_isRunning && !_cycleFinished)
-                    ? [GoButton(_handleStart)]
-                    : _cycleFinished
-                        ? [RestartButton(_handleStart, _handleReset)]
-                        : [
-                            CountdownTimer(_controller, _handleFinish),
-                            WorkoutText(
-                                _roundNumber, _exerciseIdx, _sets, exercises),
-                          ],
-              ),
-              if (_isRunning)
-                Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: [
-                    _ActionButton(
-                      title: 'Start',
-                      onPressed: () => _handleStart(),
-                    ),
-                    _ActionButton(
-                      title: 'Pause',
-                      onPressed: () => _controller.pause(),
-                    ),
-                    _ActionButton(
-                      title: 'Reset',
-                      onPressed: () => _handleReset(),
-                    ),
-                    _ActionButton(
-                      title: 'Restart',
-                      onPressed: () => _controller.restart(),
-                    ),
-                  ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30.0, 0, 30.0, 48.0),
+                  child: Column(
+                    mainAxisAlignment:
+                        (!_isRunning && !_cycleFinished) || _cycleFinished
+                            ? MainAxisAlignment.center
+                            : MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: (!_isRunning && !_cycleFinished)
+                        ? [GoButton(_handleStart, widget.updateStage)]
+                        : _cycleFinished
+                            ? [RestartButton(_handleStart, _handleReset)]
+                            : [
+                                CountdownTimer(_controller, _handleFinish),
+                                WorkoutText(_roundNumber, _exerciseIdx, _sets,
+                                    exercises),
+                                ControlButons(_controller, _isRunning,
+                                    _roundNumber, _handleReset, _handleSkip)
+                              ],
+                  ),
                 ),
+              ),
             ],
           ),
         ),
@@ -92,7 +89,7 @@ class _WorkoutState extends State<Workout> {
           _cycleFinished = false;
         },
       );
-      Timer(Duration(milliseconds: 10), () => _controller.start());
+      Timer(Duration(milliseconds: 50), () => _controller.start());
     }
   }
 
@@ -111,12 +108,13 @@ class _WorkoutState extends State<Workout> {
     if (_roundNumber != ((_sets * 2) - 1)) {
       setState(() {
         _roundNumber++;
-        duration = _roundNumber % 2 == 0 ? _restLength : _roundLength;
+        duration =
+            _roundNumber % 2 == 0 ? widget.restLength : widget.roundLength;
         if (_roundNumber > 0 && _roundNumber % 2 == 0) {
           _exerciseIdx++;
         }
       });
-      Timer(Duration(milliseconds: 10), () => _controller.start());
+      Timer(Duration(milliseconds: 50), () => _controller.start());
     } else {
       setState(
         () {
@@ -126,30 +124,40 @@ class _WorkoutState extends State<Workout> {
       );
     }
   }
-}
 
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.title,
-    this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  final VoidCallback? onPressed;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      child: Text(
-        title,
-        style: TextStyle(color: Colors.cyan),
-      ),
-    );
+  _handleSkip(bool forward) {
+    setState(() {
+      if (forward) {
+        _handleFinish();
+      } else {
+        if (_roundNumber == 0) {
+          return;
+        } else if (_roundNumber != ((_sets * 2) - 1)) {
+          setState(() {
+            _roundNumber--;
+            duration = _roundNumber == 0
+                ? 5
+                : _roundNumber % 2 == 0
+                    ? widget.restLength
+                    : widget.roundLength;
+            if (_roundNumber > 0 && _roundNumber % 2 != 0) {
+              _exerciseIdx--;
+            }
+          });
+          Timer(Duration(milliseconds: 50), () => _controller.start());
+        } else {
+          setState(
+            () {
+              _isRunning = false;
+              _cycleFinished = true;
+            },
+          );
+        }
+      }
+    });
+    Timer(Duration(milliseconds: 50), () => _controller.start());
   }
 }
-
 
 
   // _handleFinish() {
@@ -161,16 +169,16 @@ class _ActionButton extends StatelessWidget {
   //     _roundNumber++;
 
   //     if (_roundNumber % 2 != 0) {
-  //       duration = _restLength;
+  //       duration = widget.restLength;
   //       if (_roundNumber > 1) {
   //         _exerciseIdx++;
   //       }
   //     } else {
-  //       duration = _roundLength;
+  //       duration = widget.roundLength;
   //     }
 
   //     debugPrint("HELLO");
-  //     duration = _roundLength;
+  //     duration = roundLength;
   //     Timer(Duration(milliseconds: 150), () => _controller.start());
   //   } else {
   //     setState(() {

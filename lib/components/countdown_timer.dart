@@ -20,7 +20,14 @@ class CountdownTimer extends StatelessWidget {
         if (timerValue.status == TimerStatus.finished) {
           handleFinish();
         }
-        // );
+        // if (timerValue.status == TimerStatus.paused) {
+        //   // handlePause(true);
+        //   print("object");
+        // }
+        // if (timerValue.status == TimerStatus.running) {
+        //   // handlePause(false);
+        //   print("object");
+        // }
       },
       child: TimerControllerBuilder(
         controller: _controller,
@@ -54,7 +61,7 @@ class CountdownTimer extends StatelessWidget {
               //   countdownCurrentColor: timerColor,
               // ),
               CircularCountdown(
-                diameter: 250,
+                diameter: 200,
                 gapFactor: 0.51,
                 countdownTotal: _controller.initialValue.remaining,
                 countdownRemaining: timerValue.remaining,

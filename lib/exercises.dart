@@ -1,5 +1,5 @@
 List exercises = [
-  "V-Up Toe-Touches",
+  "V-Up Toe Touches",
   "Medicine Ball Wall-Throw Sit-Ups",
   "Bicycle Crunches",
   "Reverse Crunch",

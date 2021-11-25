@@ -13,9 +13,9 @@ class RestartButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Workout Finished!",
+          "Workout complete",
           style: TextStyle(
-              fontSize: 25,
+              fontSize: 20,
               fontWeight: FontWeight.normal,
               color: Colors.orange.shade700),
         ),
@@ -34,7 +34,9 @@ class RestartButton extends StatelessWidget {
                     child: Text(
                       "RESTART",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 40.0),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 43.0,
+                          color: Colors.grey[900]),
                     ),
                   ),
                 ),

@@ -14,15 +14,16 @@ class WorkoutText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 50.0),
-      child: Container(
-        height: 300,
-        width: 600,
+    return Container(
+      // decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
+      height: 220,
+      width: 600,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 30.0, 0, 0),
         child: Column(
           children: [
             SizedBox(
-              height: 100,
+              height: 80,
               child: Text(
                 roundNumber == 0
                     ? "Get Ready..."
@@ -32,7 +33,7 @@ class WorkoutText extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.cyan,
-                    fontSize: 35,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold),
               ),
             ),
@@ -43,7 +44,7 @@ class WorkoutText extends StatelessWidget {
                     ? "Up next: ${exercises[roundNumber == 0 ? 0 : roundNumber % 2 == 0 ? exerciseIdx : exerciseIdx == exercises.length - 1 ? exerciseIdx : exerciseIdx + 1]}"
                     : "",
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.orange[700], fontSize: 16),
+                style: TextStyle(color: Colors.orange[700], fontSize: 13),
                 // style: TextStyle(color: Colors.blueGrey[300], fontSize: 16),
               ),
             ),
