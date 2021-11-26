@@ -3,18 +3,31 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:workout_timer/components/radio_button.dart';
+import 'package:workout_timer/utilities/dummy_list.dart';
 import 'package:workout_timer/utilities/map_indexed.dart';
 
 class Setup extends StatefulWidget {
-  Setup(this.updateStage, this.updateRest, this.updateRound, this.roundLength,
+  Setup(
+      this.updateStage,
+      this.updateRest,
+      this.updateRound,
+      this.updateSets,
+      this.updateSelected,
+      this.roundLength,
       this.restLength,
+      this.sets,
+      this.selectedIdx,
       {Key? key})
       : super(key: key);
   Function updateRound;
   Function updateRest;
   Function updateStage;
+  Function updateSets;
+  Function updateSelected;
   int roundLength = 60;
   int restLength = 30;
+  int sets;
+  int selectedIdx;
 
   @override
   _SetupState createState() => _SetupState();
@@ -50,28 +63,25 @@ class _SetupState extends State<Setup> {
   final WorkoutList list = WorkoutList();
   final LocalStorage storage = LocalStorage('todo_app');
   bool initialized = false;
-  int selectedIdx = 1;
   TextEditingController controller = TextEditingController();
-
-  List dummyList = ["Abdominals", "Cardio Blast", "Chest Burn", "Abdominals"];
 
   @override
   Widget build(BuildContext context) {
     List<Widget> workoutRadios = dummyList
         .mapIndexed((item, idx) => Container(
               margin: EdgeInsets.only(bottom: 10.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    WorkoutRadioButton(item, idx, selectedIdx, updateSelected)
-                  ]),
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                WorkoutRadioButton(item["title"], idx, widget.selectedIdx,
+                    widget.updateSelected)
+              ]),
             ))
         .toList();
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey[900],
-        elevation: 0.0,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.grey[900],
+      //   elevation: 0.0,
+      // ),
       backgroundColor: Colors.grey[900],
       body: Container(
         // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
@@ -86,7 +96,7 @@ class _SetupState extends State<Setup> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10.0, 0, 35.0),
+                      padding: const EdgeInsets.fromLTRB(0, 40.0, 0, 35.0),
                       child: Text("Workout Setup",
                           style: TextStyle(
                               color: Colors.cyan,
@@ -171,21 +181,65 @@ class _SetupState extends State<Setup> {
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.grey, fontSize: 18),
                         )),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          border: Border.all(color: Colors.grey.shade800)),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height / 2.5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: ListView(
-                            children: [
-                              // Text("HELLO", style: TextStyle(height: .5)),
-                              ...workoutRadios,
-                            ],
-                            itemExtent: 60.0,
-                          ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height / 2.5,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 0),
+                        child: ListView(
+                          padding: EdgeInsets.only(top: 10.0),
+                          children: [
+                            ...workoutRadios,
+                            // Container(
+                            //   margin: EdgeInsets.only(bottom: 10.0),
+                            //   child: Row(
+                            //       mainAxisAlignment: MainAxisAlignment.center,
+                            //       children: [
+                            //         WorkoutRadioButton(
+                            //             "Set count (no list)",
+                            //             dummyList.length,
+                            //             widget.selectedIdx,
+                            //             widget.updateSelected)
+                            //       ]),
+                            // ),
+                            if (widget.selectedIdx == dummyList.length - 1)
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    50.0, 5.0, 50.0, 0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Sets",
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 18),
+                                    ),
+                                    Text(
+                                      widget.sets.toString(),
+                                      style: TextStyle(
+                                          color: Colors.orange, fontSize: 22),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (widget.selectedIdx == dummyList.length - 1)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30.0),
+                                child: Slider(
+                                  min: 0,
+                                  max: 20,
+                                  divisions: 20,
+                                  value: widget.sets.toDouble(),
+                                  inactiveColor: Colors.grey,
+                                  activeColor: Colors.cyan,
+                                  onChanged: (double newValue) =>
+                                      widget.updateSets(newValue.round()),
+                                ),
+                              ),
+                          ],
+                          // itemExtent: 60.0,
                         ),
                       ),
                     ),
@@ -215,11 +269,5 @@ class _SetupState extends State<Setup> {
         ),
       ),
     );
-  }
-
-  updateSelected(int newIdx) {
-    setState(() {
-      selectedIdx = newIdx;
-    });
   }
 }

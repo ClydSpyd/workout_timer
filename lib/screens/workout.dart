@@ -10,11 +10,17 @@ import 'package:workout_timer/exercises.dart';
 import 'package:workout_timer/components/countdown_timer.dart';
 import 'dart:async';
 
+import 'package:workout_timer/utilities/dummy_list.dart';
+
 class Workout extends StatefulWidget {
-  Workout(this.roundLength, this.restLength, this.updateStage, {Key? key})
+  Workout(this.roundLength, this.restLength, this.updateStage, this.selectedIdx,
+      this.sets,
+      {Key? key})
       : super(key: key);
-  int roundLength = 30;
-  int restLength = 10;
+  int roundLength;
+  int restLength;
+  int selectedIdx;
+  int sets;
   Function updateStage;
 
   @override
@@ -24,16 +30,15 @@ class Workout extends StatefulWidget {
 class _WorkoutState extends State<Workout> {
   late TimerController _controller;
   int duration = 5;
-  int _sets = exercises.length;
   int _roundNumber = 0;
   int _exerciseIdx = 0;
   bool _isRunning = false;
-  bool _isPaused = false;
   bool _cycleFinished = false;
 
   @override
   Widget build(BuildContext context) {
     _controller = TimerController.seconds(duration);
+    List exercises = dummyList.elementAt(widget.selectedIdx)["items"];
 
     return Scaffold(
       appBar: AppBar(
@@ -66,8 +71,8 @@ class _WorkoutState extends State<Workout> {
                             ? [RestartButton(_handleStart, _handleReset)]
                             : [
                                 CountdownTimer(_controller, _handleFinish),
-                                WorkoutText(_roundNumber, _exerciseIdx, _sets,
-                                    exercises),
+                                WorkoutText(_roundNumber, _exerciseIdx,
+                                    widget.sets, widget.selectedIdx, exercises),
                                 ControlButons(_controller, _isRunning,
                                     _roundNumber, _handleReset, _handleSkip)
                               ],
@@ -105,7 +110,7 @@ class _WorkoutState extends State<Workout> {
   }
 
   _handleFinish() {
-    if (_roundNumber != ((_sets * 2) - 1)) {
+    if (_roundNumber != ((widget.sets * 2) - 1)) {
       setState(() {
         _roundNumber++;
         duration =
@@ -132,7 +137,7 @@ class _WorkoutState extends State<Workout> {
       } else {
         if (_roundNumber == 0) {
           return;
-        } else if (_roundNumber != ((_sets * 2) - 1)) {
+        } else if (_roundNumber != ((widget.sets * 2) - 1)) {
           setState(() {
             _roundNumber--;
             duration = _roundNumber == 0

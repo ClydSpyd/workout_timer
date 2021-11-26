@@ -25,6 +25,7 @@ class _WorkoutRadioButtonState extends State<WorkoutRadioButton> {
         children: [
           SizedBox(
             width: 250,
+            height: 50,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: isSelected ? Colors.orange : null,

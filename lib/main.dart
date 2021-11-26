@@ -6,6 +6,7 @@ import 'package:workout_timer/screens/home_list.dart';
 import 'package:workout_timer/screens/setup.dart';
 import 'package:workout_timer/screens/setup_with_lists.dart';
 import 'package:workout_timer/screens/workout.dart';
+import 'package:workout_timer/utilities/dummy_list.dart';
 
 void main() {
   runApp(const App());
@@ -21,6 +22,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   int roundLength = 60;
   int restLength = 30;
+  int sets = 10;
+  int selectedIdx = 0;
   String stage = "setup";
 
   updateRound(int newData) {
@@ -41,12 +44,32 @@ class _AppState extends State<App> {
     });
   }
 
+  updateSets(int newData) {
+    setState(() {
+      sets = newData;
+    });
+  }
+
+  updateSelected(int newData) {
+    setState(() {
+      selectedIdx = newData;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: stage == "setup"
-          ? Setup(updateStage, updateRest, updateRound, roundLength, restLength)
-          : Workout(roundLength, restLength, updateStage),
+          ? Setup(updateStage, updateRest, updateRound, updateSets,
+              updateSelected, roundLength, restLength, sets, selectedIdx)
+          : Workout(
+              roundLength,
+              restLength,
+              updateStage,
+              selectedIdx,
+              selectedIdx == dummyList.length - 1
+                  ? sets
+                  : dummyList.elementAt(selectedIdx)["items"].length),
     );
   }
 }
