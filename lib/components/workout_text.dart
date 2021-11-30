@@ -17,7 +17,7 @@ class WorkoutText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // List exercises = dummyList.elementAt(selectedIdx)["items"];
+    // List exercises = baseList.elementAt(selectedIdx)["items"];
     bool noList = exercises.length == 0;
     return Container(
       // decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),

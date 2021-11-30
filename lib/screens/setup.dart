@@ -67,7 +67,7 @@ class _SetupState extends State<Setup> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> workoutRadios = dummyList
+    List<Widget> workoutRadios = baseList
         .mapIndexed((item, idx) => Container(
               margin: EdgeInsets.only(bottom: 10.0),
               child:
@@ -190,22 +190,10 @@ class _SetupState extends State<Setup> {
                           padding: EdgeInsets.only(top: 10.0),
                           children: [
                             ...workoutRadios,
-                            // Container(
-                            //   margin: EdgeInsets.only(bottom: 10.0),
-                            //   child: Row(
-                            //       mainAxisAlignment: MainAxisAlignment.center,
-                            //       children: [
-                            //         WorkoutRadioButton(
-                            //             "Set count (no list)",
-                            //             dummyList.length,
-                            //             widget.selectedIdx,
-                            //             widget.updateSelected)
-                            //       ]),
-                            // ),
-                            if (widget.selectedIdx == dummyList.length - 1)
+                            if (widget.selectedIdx == baseList.length - 1)
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
-                                    50.0, 5.0, 50.0, 0),
+                                    45.0, 5.0, 45.0, 0),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -223,10 +211,10 @@ class _SetupState extends State<Setup> {
                                   ],
                                 ),
                               ),
-                            if (widget.selectedIdx == dummyList.length - 1)
+                            if (widget.selectedIdx == baseList.length - 1)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 30.0),
+                                    horizontal: 25.0),
                                 child: Slider(
                                   min: 0,
                                   max: 20,
@@ -252,7 +240,7 @@ class _SetupState extends State<Setup> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints.tightFor(width: 180, height: 60),
                   child: ElevatedButton(
-                    child: Text("Start workout",
+                    child: Text("Confirm",
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,

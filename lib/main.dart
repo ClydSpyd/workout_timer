@@ -67,9 +67,9 @@ class _AppState extends State<App> {
               restLength,
               updateStage,
               selectedIdx,
-              selectedIdx == dummyList.length - 1
+              selectedIdx == baseList.length - 1
                   ? sets
-                  : dummyList.elementAt(selectedIdx)["items"].length),
+                  : baseList.elementAt(selectedIdx)["items"].length),
     );
   }
 }

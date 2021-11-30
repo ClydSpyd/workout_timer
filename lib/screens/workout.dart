@@ -6,7 +6,7 @@ import 'package:workout_timer/components/control_buttons.dart';
 import 'package:workout_timer/components/go_button.dart';
 import 'package:workout_timer/components/restart_button.dart';
 import 'package:workout_timer/components/workout_text.dart';
-import 'package:workout_timer/exercises.dart';
+import 'package:swipeable/swipeable.dart';
 import 'package:workout_timer/components/countdown_timer.dart';
 import 'dart:async';
 
@@ -38,7 +38,7 @@ class _WorkoutState extends State<Workout> {
   @override
   Widget build(BuildContext context) {
     _controller = TimerController.seconds(duration);
-    List exercises = dummyList.elementAt(widget.selectedIdx)["items"];
+    List exercises = baseList.elementAt(widget.selectedIdx)["items"];
 
     return Scaffold(
       appBar: AppBar(
@@ -47,9 +47,11 @@ class _WorkoutState extends State<Workout> {
       ),
       backgroundColor: Colors.grey[900],
       body: Center(
-        child: Container(
+        child: Swipeable(
+          onSwipeLeft: () => _handleSkip(true),
+          onSwipeRight: () => _handleSkip(false),
           // decoration: BoxDecoration(border: Border.all(color: Colors.red)),
-          child: Column(
+          background: Column(
             // mainAxisSize: MainAxisSize.max,
             mainAxisAlignment:
                 (!_isRunning && !_cycleFinished) || _cycleFinished

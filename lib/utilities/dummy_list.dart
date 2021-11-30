@@ -1,4 +1,4 @@
-List dummyList = [
+List baseList = [
   {
     "title": "Abdominals",
     "items": [

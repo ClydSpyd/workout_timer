@@ -32,6 +32,7 @@ dependencies:
   circular_countdown: ^2.1.0
   timer_controller: ^0.1.0
   localstorage: ^4.0.0+1
+  swipeable: ^1.1.0
 
 
   # The following adds the Cupertino Icons font to your application.
